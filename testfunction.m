@@ -5,7 +5,7 @@
 % Haupt & Haupt
 % 2003
 function f=testfunction(x)
-funnum=16;
+funnum=2;
 if funnum==1 %F1
 f=abs(x)+cos(x);
 elseif funnum==2 %F2

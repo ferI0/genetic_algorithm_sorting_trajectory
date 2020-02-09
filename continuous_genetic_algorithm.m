@@ -7,8 +7,8 @@
 % 2003
 %_______________________________________________________
 % I Setup the GA
-ff='testfunction'%'tspfun'; % objective function
-npar=2; % number of optimization variables
+ff='tspfun' % objective function
+npar=1; % number of optimization variables
 varhi=10; varlo=0; % variable limits
 %_______________________________________________________
 % II Stopping criteria
@@ -17,7 +17,7 @@ mincost=-9999999; % minimum cost
 %_______________________________________________________
 % III GA parameters
 popsize=12; % set population size
-mutrate=.2; % set mutation rate
+mutrate=.8; % set mutation rate
 selection=0.5; % fraction of population kept
 Nt=npar; % continuous parameter GA Nt=#variables
 keep=floor(selection*popsize); % #population
