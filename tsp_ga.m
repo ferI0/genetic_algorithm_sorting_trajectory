@@ -89,7 +89,12 @@
 function varargout = tsp_ga(varargin)
     
     % Initialize default configuration
-    defaultConfig.xy          = 10*rand(50,2);
+    defaultConfig.xy          = [1 1
+        2 1
+        1 2
+        2 2
+        8 1
+        0.5 17]%10*rand(50,2);
     defaultConfig.dmat        = [];
     defaultConfig.popSize     = 100;
     defaultConfig.numIter     = 1e4;
