@@ -16,7 +16,10 @@ target2 = [5 2,
            6 1];
        
 %% Manual route selection
-vertices = [startEnd; seedlings(1,1:2); target1(1,:); startEnd]
-
-for 
+vertices = [startEnd; seedlings(1,1:2); target1(1,:); seedlings(2,1:2); target2(1,:); startEnd]
+routeLength = 0;
+for i = 2:length(vertices)
+    verticeLength = abs(sqrt(vertices(i,1)^2+vertices(i,2)^2) - sqrt(vertices(i-1,1)^2+vertices(i-1,2)^2))
+    routeLength = routeLength + verticeLength
+end
            
