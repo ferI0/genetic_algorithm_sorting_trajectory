@@ -20,7 +20,7 @@ target2 = [5 2,
            6 1];
 %% Generate population an route vector depending on population       
 population = randperm(n,n);
-routeMatrix = zeros(vertices, 2);
+routeMatrix = zeros(vertices+1, 2);
 posCount = 2;
 targetCount1 = 1;
 targetCount2 = 1;
@@ -44,4 +44,14 @@ for i = 2:vertices
         - sqrt(routeMatrix(i-1,1)^2+routeMatrix(i-1,2)^2))
     routeLength = routeLength + verticeLength
 end
-           
+
+%% Plot route
+figure(1);
+xlim([0 6]);
+ylim([0 3]);
+grid on;
+for i = 1:vertices
+    hold on
+    plot(routeMatrix([i, i+1],1), routeMatrix([i, i+1],2))
+    hold off
+end
