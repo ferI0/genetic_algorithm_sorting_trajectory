@@ -41,8 +41,8 @@ end
 routeLength = 0;
 for i = 2:vertices
     verticeLength = abs(sqrt(routeMatrix(i,1)^2+routeMatrix(i,2)^2)...
-        - sqrt(routeMatrix(i-1,1)^2+routeMatrix(i-1,2)^2))
-    routeLength = routeLength + verticeLength
+        - sqrt(routeMatrix(i-1,1)^2+routeMatrix(i-1,2)^2));
+    routeLength = routeLength + verticeLength;
 end
 
 %% Plot route
