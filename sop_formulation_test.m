@@ -2,7 +2,7 @@
 %% FE 2020
 
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 6;
+n = 6;  %Number of seedlings
 vertices = 2*n+1;
 startEnd = [0 0];
 seedlings = [1 1 randi([1 2],1),
@@ -41,9 +41,9 @@ squareY3 = [Y1, Y1, Y2, Y2, Y1];
 %% Initialize stuff
 currentRecord = 999999;
 recordDistance = 999999;
-maxIter = 10000;
+maxIter = 100;
 iterCount = 0;
-popSize = 10;
+popSize = 100;
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
@@ -119,8 +119,15 @@ while iterCount < maxIter
     end
     
     %% Create next Generation
+    newPopulation = zeros(popSize,n);
+    for i = 1:popSize
+        orderA = select_point(population(:,:), fitness(:,:));
+        %orderB = select_point(population(:,:), fitness(:,:));
+        newPopulation(i,:) = orderA;
+        
+    end
+    population = newPopulation;
     
-                
     %% Increment iter
     iterCount = iterCount+1;
 end
