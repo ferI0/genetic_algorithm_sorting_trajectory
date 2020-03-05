@@ -47,6 +47,7 @@ popSize = 100;
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
+mutationRate = 0.1;
 
 for i = 1:popSize
     population(i,:) = randperm(n,n);
@@ -101,7 +102,7 @@ while iterCount < maxIter
         
         if routeLength < currentRecord
             currentRecord = routeLength;
-            currentBest = population(i,:);                       
+            currentBest = population(i,:);
         end
         
         %% Calculate fitness
@@ -118,12 +119,21 @@ while iterCount < maxIter
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
     
-    %% Create next Generation
+    %% Create next Generation with mutation
     newPopulation = zeros(popSize,n);
     for i = 1:popSize
-        orderA = select_point(population(:,:), fitness(:,:));
+        order = select_point(population(:,:), fitness(:,:));
         %orderB = select_point(population(:,:), fitness(:,:));
-        newPopulation(i,:) = orderA;
+        for j = 1:n
+            if rand < mutationRate
+                pointA = randi(length(order));
+                pointB = mod(pointA + 1, 2) + 1;
+                temp = order(pointA);
+                order(pointA) = order(pointB);
+                order(pointB) = temp;
+            end
+        end
+        newPopulation(i,:) = order;
         
     end
     population = newPopulation;
