@@ -19,48 +19,70 @@ target2 = [5 2,
     6 2,
     6 1];
 
-%% IterCount and "best" Solution so far
+%% Initialize stuff
 currentRecord = 999999;
-maxIter = 10;
+recordDistance = 999999;
+maxIter = 1000;
 iterCount = 0;
+popSize = 10;
+routeMatrix = zeros(popSize, vertices+1, 2);
+population = zeros(popSize,n);
+for i = 1:popSize
+    population(i,:) = randperm(n,n);
+end
+
 while iterCount < maxIter
-    %% Generate population an route vector depending on population
-    population = randperm(n,n);
-    routeMatrix = zeros(vertices+1, 2);
-    posCount = 2;
-    targetCount1 = 1;
-    targetCount2 = 1;
-    for i = 1:length(population)
-        routeMatrix(posCount,:) = seedlings(population(i),1:2);
-        if seedlings(population(i),3) == 1
-            routeMatrix(posCount+1,:) = target1(targetCount1,:);
-            targetCount1 = targetCount1 + 1;
-        end
-        if seedlings(population(i),3) == 2
-            routeMatrix(posCount+1,:) = target2(targetCount2,:);
-            targetCount2 = targetCount2 + 1;
-        end
-        posCount = posCount + 2;
-    end
     %% Calculate Fitness
-    %% Calculation of route length
-    routeLength = 0;
-    for i = 2:vertices
-        verticeLength = abs(sqrt(routeMatrix(i,1)^2+routeMatrix(i,2)^2)...
-            - sqrt(routeMatrix(i-1,1)^2+routeMatrix(i-1,2)^2));
-        routeLength = routeLength + verticeLength;
+    for i = 1:popSize
+        posCount = 2;
+        targetCount1 = 1;
+        targetCount2 = 1;
+        for j = 1:length(population(i,:))
+            routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
+            if seedlings(population(i,j),3) == 1
+                routeMatrix(i,posCount+1,:) = target1(targetCount1,:);
+                targetCount1 = targetCount1 + 1;
+            end
+            if seedlings(population(i,j),3) == 2
+                routeMatrix(i,posCount+1,:) = target2(targetCount2,:);
+                targetCount2 = targetCount2 + 1;
+            end
+            posCount = posCount + 2;
+        end
+        %% Calculation of route length
+        routeLength = 0;
+        for k = 2:vertices
+            verticeLength = abs(sqrt(routeMatrix(i,k,1)^2+routeMatrix(i,k,2)^2)...
+                - sqrt(routeMatrix(i,k-1,1)^2+routeMatrix(i,k-1,2)^2));
+            routeLength = routeLength + verticeLength;
+        end
+        
+        if routeLength < recordDistance
+            recordDistance = routeLength;
+            bestEver = population(i,:);
+        end
+        
+        if routeLength < currentRecord
+            currentRecord = routeLength;
+            currentBest = population(i,:);
+        end
     end
     
-    %% Plot route
-    figure(1);
-    xlim([0 6]);
-    ylim([0 3]);
-    grid on;
-    for i = 1:vertices
-        hold on
-        plot(routeMatrix([i, i+1],1), routeMatrix([i, i+1],2))
-        hold off
+    if routeLength < currentRecord
+        currentRecord = routeLength;
+        %% Plot route
+        figure(1);
+        clf(figure(1));
+        xlim([0 6]);
+        ylim([0 3]);
+        grid on;
+        for i = 1:vertices
+            hold on
+            plot(routeMatrix(1,[i, i+1],1), routeMatrix(1,[i, i+1],2))
+            hold off
+        end
     end
+    
     
     %% Increment iter
     iterCount = iterCount+1;
