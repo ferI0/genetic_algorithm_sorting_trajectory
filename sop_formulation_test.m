@@ -2,52 +2,45 @@
 %% FE 2020
 
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 6;  %Number of seedlings
+n = 96;  %Number of seedlings
 vertices = 2*n+1;
 startEnd = [0 0];
-seedlings = [1 1 randi([1 2],1),
-    1 2 randi([1 2],1),
-    2 1 randi([1 2],1),
-    2 2 randi([1 2],1),
-    1 3 randi([1 2],1),
-    2 3 randi([1 2],1)];
-target1 = [3 3,
-    3 2,
-    3 1,
-    4 3,
-    4 2,
-    4 1];
-
-target2 = [5 3,
-    5 2,
-    5 1,
-    6 3,
-    6 2,
-    6 1];
+seedlings = zeros(n,3);
+target1 = zeros(n,2);
+target2 = zeros(n,2);
+seedCount = 1;
+for i = 8:-1:1
+    for j = 1:12
+        seedlings(seedCount,:,:) = [j i randi([1 2],1)];
+        target1(seedCount,:) = [j+12 i];
+        target2(seedCount,:) = [j+24 i];
+        seedCount = seedCount + 1;
+    end
+end
 
 %% Squares
 X1 = 0.5;
-X2 = 2.5;
+X2 = 12.5;
 Y1 = 0.5;
-Y2 = 3.5;
+Y2 = 8.5;
 
 squareX1 = [X1, X2, X2, X1, X1];
 squareY1 = [Y1, Y1, Y2, Y2, Y1];
-squareX2 = [X1+2, X2+2, X2+2, X1+2, X1+2];
+squareX2 = [X1+12, X2+12, X2+12, X1+12, X1+12];
 squareY2 = [Y1, Y1, Y2, Y2, Y1];
-squareX3 = [X1+4, X2+4, X2+4, X1+4, X1+4];
+squareX3 = [X1+24, X2+24, X2+24, X1+24, X1+24];
 squareY3 = [Y1, Y1, Y2, Y2, Y1];
 
 %% Initialize stuff
 currentRecord = 999999;
 recordDistance = 999999;
-maxIter = 100;
+maxIter = 10;
 iterCount = 0;
-popSize = 100;
+popSize = 500;
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
-mutationRate = 0.1;
+mutationRate = 0.15;
 
 for i = 1:popSize
     population(i,:) = randperm(n,n);
@@ -88,8 +81,9 @@ while iterCount < maxIter
             %% Plot route
             figure(1);
             clf(figure(1));
-            xlim([0 7]);
-            ylim([0 4]);
+            title(recordDistance);
+            xlim([0 37]);
+            ylim([0 9]);
             grid on;
             for l = 1:vertices
                 hold on
@@ -98,6 +92,7 @@ while iterCount < maxIter
             plot(squareX1, squareY1);
             plot(squareX2, squareY2);
             plot(squareX3, squareY3);
+            daspect([1 1 1])
         end
         
         if routeLength < currentRecord
