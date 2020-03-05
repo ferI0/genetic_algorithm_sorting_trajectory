@@ -92,7 +92,7 @@ while iterCount < maxIter
             grid on;
             for l = 1:vertices
                 hold on
-                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2))
+                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o')
             end
             plot(squareX1, squareY1);
             plot(squareX2, squareY2);
@@ -117,6 +117,9 @@ while iterCount < maxIter
     for i = 1:popSize
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
+    
+    %% Create next Generation
+    
                 
     %% Increment iter
     iterCount = iterCount+1;
