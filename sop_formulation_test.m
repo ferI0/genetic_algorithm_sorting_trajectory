@@ -54,9 +54,9 @@ popUnoptimized = [1:1:n];
 %% Initialize stuff
 currentRecord = 999999;
 recordDistance = 999999;
-maxIter = 100;
+maxIter = 20;
 iterCount = 0;
-popSize = 600;
+popSize = 100;
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
@@ -183,8 +183,9 @@ while iterCount < maxIter
     %% Create next Generation with mutation
     newPopulation = zeros(popSize,n);
     for i = 1:popSize
-        order = select_point(population(:,:), fitness(:,:));
-        %orderB = select_point(population(:,:), fitness(:,:));
+        orderA = select_point(population(:,:), fitness(:,:));
+        orderB = select_point(population(:,:), fitness(:,:));
+        order = crossover(orderA, orderB);
         for j = 1:n
             if rand < mutationRate
                 pointA = randi(length(order));
