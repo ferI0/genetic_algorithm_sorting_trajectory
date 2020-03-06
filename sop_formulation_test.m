@@ -2,7 +2,7 @@
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 96;  %Number of seedlings
+n = 10;  %Number of seedlings
 vertices = 2*n+1;
 startEnd = [0 0];
 seedlings = zeros(n,3);
@@ -12,12 +12,13 @@ target3 = zeros(n,2);
 target4 = zeros(n,2);
 target5 = zeros(n,2);
 seedCount = 1;
-groupNums = 5;
+groupLow = 2;
+groupHigh = 4;
 boxWidth = 12;
 
 for i = 8:-1:1
     for j = 1:12
-        seedlings(seedCount,:,:) = [j i randi([1 groupNums],1)];
+        seedlings(seedCount,:,:) = [j i randi([groupLow groupHigh],1)];
         target1(seedCount,:) = [j+boxWidth i];
         target2(seedCount,:) = [j+2*boxWidth i];
         target3(seedCount,:) = [j+3*boxWidth i];
@@ -54,13 +55,13 @@ popUnoptimized = [1:1:n];
 %% Initialize stuff
 currentRecord = 999999;
 recordDistance = 999999;
-maxIter = 20;
+maxIter = 100;
 iterCount = 0;
-popSize = 100;
+popSize = 250;
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
-mutationRate = 0.15;
+mutationRate = 0.14;
 
 for i = 1:popSize
     population(i,:) = randperm(n,n);
@@ -77,11 +78,11 @@ while iterCount < maxIter
         posCount = 2;
         %  Reset Counts to start with first empty position. Increase to
         %  simulate prefilled trys.
-        targetCount1 = 1;
-        targetCount2 = 1;
-        targetCount3 = 1;
+        targetCount1 = 41;
+        targetCount2 = 61;
+        targetCount3 = 51;
         targetCount4 = 1;
-        targetCount5 = 1;
+        targetCount5 = 11;
         for j = 1:length(population(i,:))
             routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
             if seedlings(population(i,j),3) == 1
@@ -116,7 +117,7 @@ while iterCount < maxIter
         if popMark == false
             figure(1);
             subplot(2,1,1);
-            title(routeLength);
+            title("Unoptimized distance: "+routeLength);
             xlim([0 73]);
             ylim([0 9]);
             grid on;
@@ -143,10 +144,10 @@ while iterCount < maxIter
             figure(1);
             subplot(2,1,2);
             cla(subplot(2,1,2));
-            title(recordDistance);
+            title("Optimized distance: "+recordDistance);
             xlim([0 73]);
             ylim([0 9]);
-            xlabel((recordDistance/standardLength-1)*100);
+            xlabel((recordDistance/standardLength-1)*100+"%");
             grid on;
             for l = 1:vertices
                 hold on
