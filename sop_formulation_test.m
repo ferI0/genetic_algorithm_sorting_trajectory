@@ -1,6 +1,6 @@
 %% Test of route generation for genetic algorithm
 %% FE 2020
-
+clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
 n = 96;  %Number of seedlings
 vertices = 2*n+1;
@@ -8,15 +8,26 @@ startEnd = [0 0];
 seedlings = zeros(n,3);
 target1 = zeros(n,2);
 target2 = zeros(n,2);
+target3 = zeros(n,2);
+target4 = zeros(n,2);
+target5 = zeros(n,2);
 seedCount = 1;
+groupNums = 5;
+boxWidth = 12;
+
 for i = 8:-1:1
     for j = 1:12
-        seedlings(seedCount,:,:) = [j i randi([1 2],1)];
-        target1(seedCount,:) = [j+12 i];
-        target2(seedCount,:) = [j+24 i];
+        seedlings(seedCount,:,:) = [j i randi([1 groupNums],1)];
+        target1(seedCount,:) = [j+boxWidth i];
+        target2(seedCount,:) = [j+2*boxWidth i];
+        target3(seedCount,:) = [j+3*boxWidth i];
+        target4(seedCount,:) = [j+4*boxWidth i];
+        target5(seedCount,:) = [j+5*boxWidth i];
+        
         seedCount = seedCount + 1;
     end
 end
+
 
 %% Squares
 X1 = 0.5;
@@ -26,17 +37,26 @@ Y2 = 8.5;
 
 squareX1 = [X1, X2, X2, X1, X1];
 squareY1 = [Y1, Y1, Y2, Y2, Y1];
-squareX2 = [X1+12, X2+12, X2+12, X1+12, X1+12];
+squareX2 = [X1+boxWidth, X2+boxWidth, X2+boxWidth, X1+boxWidth, X1+boxWidth];
 squareY2 = [Y1, Y1, Y2, Y2, Y1];
-squareX3 = [X1+24, X2+24, X2+24, X1+24, X1+24];
+squareX3 = [X1+2*boxWidth, X2+2*boxWidth, X2+2*boxWidth, X1+2*boxWidth, X1+2*boxWidth];
 squareY3 = [Y1, Y1, Y2, Y2, Y1];
+squareX4 = [X1+3*boxWidth, X2+3*boxWidth, X2+3*boxWidth, X1+3*boxWidth, X1+3*boxWidth];
+squareY4 = [Y1, Y1, Y2, Y2, Y1];
+squareX5 = [X1+4*boxWidth, X2+4*boxWidth, X2+4*boxWidth, X1+4*boxWidth, X1+4*boxWidth];
+squareY5 = [Y1, Y1, Y2, Y2, Y1];
+squareX6 = [X1+5*boxWidth, X2+5*boxWidth, X2+5*boxWidth, X1+5*boxWidth, X1+5*boxWidth];
+squareY6 = [Y1, Y1, Y2, Y2, Y1];
+
+%   Create one standard pop with standard route for comparison
+popUnoptimized = [1:1:n];
 
 %% Initialize stuff
 currentRecord = 999999;
 recordDistance = 999999;
-maxIter = 10;
+maxIter = 100;
 iterCount = 0;
-popSize = 500;
+popSize = 600;
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
@@ -46,13 +66,22 @@ for i = 1:popSize
     population(i,:) = randperm(n,n);
 end
 
+population(1,:) = popUnoptimized;
+popMark = false;
+standardLength = 1;
+
 while iterCount < maxIter
     %% Calculate Fitness
     for i = 1:popSize
         %% Generate routeMatrix depending on populations
         posCount = 2;
+        %  Reset Counts to start with first empty position. Increase to
+        %  simulate prefilled trys.
         targetCount1 = 1;
         targetCount2 = 1;
+        targetCount3 = 1;
+        targetCount4 = 1;
+        targetCount5 = 1;
         for j = 1:length(population(i,:))
             routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
             if seedlings(population(i,j),3) == 1
@@ -63,6 +92,18 @@ while iterCount < maxIter
                 routeMatrix(i,posCount+1,:) = target2(targetCount2,:);
                 targetCount2 = targetCount2 + 1;
             end
+            if seedlings(population(i,j),3) == 3
+                routeMatrix(i,posCount+1,:) = target3(targetCount3,:);
+                targetCount3 = targetCount3 + 1;
+            end
+            if seedlings(population(i,j),3) == 4
+                routeMatrix(i,posCount+1,:) = target4(targetCount4,:);
+                targetCount4 = targetCount4 + 1;
+            end
+            if seedlings(population(i,j),3) == 5
+                routeMatrix(i,posCount+1,:) = target5(targetCount5,:);
+                targetCount5 = targetCount5 + 1;
+            end
             posCount = posCount + 2;
         end
         %% Calculation of route length
@@ -72,17 +113,11 @@ while iterCount < maxIter
                 - sqrt(routeMatrix(i,k-1,1)^2+routeMatrix(i,k-1,2)^2));
             routeLength = routeLength + verticeLength;
         end
-        
-        %% Update best populations
-        if routeLength < recordDistance
-            recordDistance = routeLength;
-            bestEver = population(i,:);
-            
-            %% Plot route
+        if popMark == false
             figure(1);
-            clf(figure(1));
-            title(recordDistance);
-            xlim([0 37]);
+            subplot(2,1,1);
+            title(routeLength);
+            xlim([0 73]);
             ylim([0 9]);
             grid on;
             for l = 1:vertices
@@ -92,6 +127,37 @@ while iterCount < maxIter
             plot(squareX1, squareY1);
             plot(squareX2, squareY2);
             plot(squareX3, squareY3);
+            plot(squareX4, squareY4);
+            plot(squareX5, squareY5);
+            plot(squareX6, squareY6);
+            daspect([1 1 1])
+            standardLength = routeLength;
+            popMark = true;
+        end
+        %% Update best populations
+        if routeLength < recordDistance
+            recordDistance = routeLength;
+            bestEver = population(i,:);
+            
+            %% Plot route
+            figure(1);
+            subplot(2,1,2);
+            cla(subplot(2,1,2));
+            title(recordDistance);
+            xlim([0 73]);
+            ylim([0 9]);
+            xlabel((recordDistance/standardLength-1)*100);
+            grid on;
+            for l = 1:vertices
+                hold on
+                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o')
+            end
+            plot(squareX1, squareY1);
+            plot(squareX2, squareY2);
+            plot(squareX3, squareY3);
+            plot(squareX4, squareY4);
+            plot(squareX5, squareY5);
+            plot(squareX6, squareY6);
             daspect([1 1 1])
         end
         
@@ -101,7 +167,7 @@ while iterCount < maxIter
         end
         
         %% Calculate fitness
-        fitness(i,1) = routeLength;%1 / (routeLength^8 + 1);
+        fitness(i,1) = routeLength;
     end
     
     %% Normalize Fitness
