@@ -2,7 +2,7 @@
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 10;  %Number of seedlings
+n = 96;  %Number of seedlings
 vertices = 2*n+1;
 startEnd = [0 0];
 seedlings = zeros(n,3);
@@ -12,8 +12,8 @@ target3 = zeros(n,2);
 target4 = zeros(n,2);
 target5 = zeros(n,2);
 seedCount = 1;
-groupLow = 2;
-groupHigh = 4;
+groupLow = 1;
+groupHigh = 5;
 boxWidth = 12;
 
 for i = 8:-1:1
@@ -78,11 +78,11 @@ while iterCount < maxIter
         posCount = 2;
         %  Reset Counts to start with first empty position. Increase to
         %  simulate prefilled trys.
-        targetCount1 = 41;
-        targetCount2 = 61;
-        targetCount3 = 51;
+        targetCount1 = 1;
+        targetCount2 = 1;
+        targetCount3 = 1;
         targetCount4 = 1;
-        targetCount5 = 11;
+        targetCount5 = 1;
         for j = 1:length(population(i,:))
             routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
             if seedlings(population(i,j),3) == 1
