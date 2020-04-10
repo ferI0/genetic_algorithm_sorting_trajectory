@@ -173,7 +173,7 @@ while iterCount < maxIter
     sortedFitness(:,2) = [1:1:popSize];
     sortedFitness = sortrows(sortedFitness,1);
     
-    %% Create next Generation with mutation
+    %% Create next Generation with mutation, but keep best
     newPopulation = zeros(popSize,n);
     for i = 1:keepSize
         newPopulation(i,:) = population(sortedFitness(i,2),:);
