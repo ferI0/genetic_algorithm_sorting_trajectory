@@ -2,7 +2,7 @@
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 26;  %Number of seedlings
+n = 96;  %Number of seedlings
 vertices = 2*n+1;
 seedlings = zeros(n,3);
 target1 = zeros(n,2);
@@ -12,7 +12,7 @@ target4 = zeros(n,2);
 target5 = zeros(n,2);
 seedCount = 1;
 groupLow = 1;
-groupHigh = 3;
+groupHigh = 4;
 boxWidth = 12;
 
 for i = 8:-1:1
@@ -29,8 +29,8 @@ end
 
 
 %% Squares
-X1 = 0.5+2*boxWidth;
-X2 = 12.5+2*boxWidth;
+X1 = 0.6+2*boxWidth;
+X2 = 12.4+2*boxWidth;
 Y1 = 0.5;
 Y2 = 8.5;
 
@@ -53,7 +53,7 @@ popSize = 100;
 mu = 0.2; 
 mutationRate = 0.1;
 
-recordDistance = 999999;
+recordDistance = inf;
 maxIter = 100;
 iterCount = 0;
 keepSize = floor(mu*popSize);
@@ -184,8 +184,8 @@ while iterCount < maxIter
     %% Fill all others with mated and mutated recombinations from last generation
     for i = keepSize:popSize
         % Crossover
-        orderA = select_point(population(:,:), fitness(:,:));
-        orderB = select_point(population(:,:), fitness(:,:));
+        orderA = roulette_wheel(population(:,:), fitness(:,:));
+        orderB = roulette_wheel(population(:,:), fitness(:,:));
         order = crossover(orderA, orderB);
         % Mutation
         for j = 1:n
