@@ -2,9 +2,8 @@
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 96;  %Number of seedlings
+n = 26;  %Number of seedlings
 vertices = 2*n+1;
-startEnd = [0 0];
 seedlings = zeros(n,3);
 target1 = zeros(n,2);
 target2 = zeros(n,2);
@@ -13,17 +12,16 @@ target4 = zeros(n,2);
 target5 = zeros(n,2);
 seedCount = 1;
 groupLow = 1;
-groupHigh = 5;
+groupHigh = 3;
 boxWidth = 12;
 
 for i = 8:-1:1
     for j = 1:12
-        seedlings(seedCount,:,:) = [j i randi([groupLow groupHigh],1)];
-        target1(seedCount,:) = [j+boxWidth i];
-        target2(seedCount,:) = [j+2*boxWidth i];
+        seedlings(seedCount,:,:) = [j+2*boxWidth i randi([groupLow groupHigh],1)];
+        target1(seedCount,:) = [j i];
+        target2(seedCount,:) = [j+1*boxWidth i];
         target3(seedCount,:) = [j+3*boxWidth i];
         target4(seedCount,:) = [j+4*boxWidth i];
-        target5(seedCount,:) = [j+5*boxWidth i];
         
         seedCount = seedCount + 1;
     end
@@ -31,37 +29,38 @@ end
 
 
 %% Squares
-X1 = 0.5;
-X2 = 12.5;
+X1 = 0.5+2*boxWidth;
+X2 = 12.5+2*boxWidth;
 Y1 = 0.5;
 Y2 = 8.5;
 
 squareX1 = [X1, X2, X2, X1, X1];
 squareY1 = [Y1, Y1, Y2, Y2, Y1];
-squareX2 = [X1+boxWidth, X2+boxWidth, X2+boxWidth, X1+boxWidth, X1+boxWidth];
+squareX2 = [X1-boxWidth, X2-boxWidth, X2-boxWidth, X1-boxWidth, X1-boxWidth];
 squareY2 = [Y1, Y1, Y2, Y2, Y1];
-squareX3 = [X1+2*boxWidth, X2+2*boxWidth, X2+2*boxWidth, X1+2*boxWidth, X1+2*boxWidth];
+squareX3 = [X1-2*boxWidth, X2-2*boxWidth, X2-2*boxWidth, X1-2*boxWidth, X1-2*boxWidth];
 squareY3 = [Y1, Y1, Y2, Y2, Y1];
-squareX4 = [X1+3*boxWidth, X2+3*boxWidth, X2+3*boxWidth, X1+3*boxWidth, X1+3*boxWidth];
+squareX4 = [X1+boxWidth, X2+boxWidth, X2+boxWidth, X1+boxWidth, X1+boxWidth];
 squareY4 = [Y1, Y1, Y2, Y2, Y1];
-squareX5 = [X1+4*boxWidth, X2+4*boxWidth, X2+4*boxWidth, X1+4*boxWidth, X1+4*boxWidth];
+squareX5 = [X1+2*boxWidth, X2+2*boxWidth, X2+2*boxWidth, X1+2*boxWidth, X1+2*boxWidth];
 squareY5 = [Y1, Y1, Y2, Y2, Y1];
-squareX6 = [X1+5*boxWidth, X2+5*boxWidth, X2+5*boxWidth, X1+5*boxWidth, X1+5*boxWidth];
-squareY6 = [Y1, Y1, Y2, Y2, Y1];
 
 %   Create one standard pop with standard route for comparison
 popUnoptimized = [1:1:n];
 
 %% Initialize stuff
-currentRecord = 999999;
+popSize = 100;
+mu = 0.2; 
+mutationRate = 0.18;
+
 recordDistance = 999999;
 maxIter = 100;
 iterCount = 0;
-popSize = 250;
+keepSize = floor(mu*popSize);
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
-mutationRate = 0.14;
+
 
 for i = 1:popSize
     population(i,:) = randperm(n,n);
@@ -82,7 +81,6 @@ while iterCount < maxIter
         targetCount2 = 1;
         targetCount3 = 1;
         targetCount4 = 1;
-        targetCount5 = 1;
         for j = 1:length(population(i,:))
             routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
             if seedlings(population(i,j),3) == 1
@@ -101,10 +99,6 @@ while iterCount < maxIter
                 routeMatrix(i,posCount+1,:) = target4(targetCount4,:);
                 targetCount4 = targetCount4 + 1;
             end
-            if seedlings(population(i,j),3) == 5
-                routeMatrix(i,posCount+1,:) = target5(targetCount5,:);
-                targetCount5 = targetCount5 + 1;
-            end
             posCount = posCount + 2;
         end
         %% Calculation of route length
@@ -118,7 +112,7 @@ while iterCount < maxIter
             figure(1);
             subplot(2,1,1);
             title("Unoptimized distance: "+routeLength);
-            xlim([0 73]);
+            xlim([0 61]);
             ylim([0 9]);
             grid on;
             for l = 1:vertices
@@ -130,7 +124,6 @@ while iterCount < maxIter
             plot(squareX3, squareY3);
             plot(squareX4, squareY4);
             plot(squareX5, squareY5);
-            plot(squareX6, squareY6);
             daspect([1 1 1])
             standardLength = routeLength;
             popMark = true;
@@ -145,7 +138,7 @@ while iterCount < maxIter
             subplot(2,1,2);
             cla(subplot(2,1,2));
             title("Optimized distance: "+recordDistance);
-            xlim([0 73]);
+            xlim([0 61]);
             ylim([0 9]);
             xlabel((recordDistance/standardLength-1)*100+"%");
             grid on;
@@ -158,16 +151,10 @@ while iterCount < maxIter
             plot(squareX3, squareY3);
             plot(squareX4, squareY4);
             plot(squareX5, squareY5);
-            plot(squareX6, squareY6);
             daspect([1 1 1])
         end
         
-        if routeLength < currentRecord
-            currentRecord = routeLength;
-            currentBest = population(i,:);
-        end
-        
-        %% Calculate fitness
+        %% "Calculate" fitness
         fitness(i,1) = routeLength;
     end
     
@@ -181,16 +168,28 @@ while iterCount < maxIter
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
     
+    sortedFitness = zeros(100,2);
+    sortedFitness(:,1) = fitness;
+    sortedFitness(:,2) = [1:1:popSize];
+    sortedFitness = sortrows(sortedFitness,1);
+    
     %% Create next Generation with mutation
     newPopulation = zeros(popSize,n);
-    for i = 1:popSize
+    for i = 1:keepSize
+        newPopulation(i,:) = population(sortedFitness(i,2),:);
+    end
+    for i = keepSize:popSize
         orderA = select_point(population(:,:), fitness(:,:));
         orderB = select_point(population(:,:), fitness(:,:));
         order = crossover(orderA, orderB);
         for j = 1:n
             if rand < mutationRate
                 pointA = randi(length(order));
-                pointB = mod(pointA + 1, 2) + 1;
+                if pointA < length(order)
+                    pointB = pointA + 1;
+                else
+                    pointB = pointA - 1; 
+                end
                 temp = order(pointA);
                 order(pointA) = order(pointB);
                 order(pointB) = temp;
