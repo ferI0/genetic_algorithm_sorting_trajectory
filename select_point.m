@@ -1,6 +1,8 @@
 function [outputArg1] = select_point(pop,fit)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%Select point
+%   Function to select a random pop based on
+%   fitness values. Second clause with index length to keep output in
+%   boundaries.
 index = 1;
 randNum = rand;
 while randNum > 0 && index < length(fit)

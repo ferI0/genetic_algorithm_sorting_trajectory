@@ -51,7 +51,7 @@ popUnoptimized = [1:1:n];
 %% Initialize stuff
 popSize = 100;
 mu = 0.2; 
-mutationRate = 0.18;
+mutationRate = 0.1;
 
 recordDistance = 999999;
 maxIter = 100;
@@ -168,20 +168,26 @@ while iterCount < maxIter
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
     
-    sortedFitness = zeros(100,2);
+    %% Sort fitness values while keeping the index
+    sortedFitness = zeros(popSize,2);
     sortedFitness(:,1) = fitness;
-    sortedFitness(:,2) = [1:1:popSize];
+    sortedFitness(:,2) = 1:1:popSize;
     sortedFitness = sortrows(sortedFitness,1);
     
-    %% Create next Generation with mutation, but keep best
+    %% Create next Generation with mutation
     newPopulation = zeros(popSize,n);
+    %% Keep best populations
     for i = 1:keepSize
         newPopulation(i,:) = population(sortedFitness(i,2),:);
     end
+    
+    %% Fill all others with mated and mutated recombinations from last generation
     for i = keepSize:popSize
+        % Crossover
         orderA = select_point(population(:,:), fitness(:,:));
         orderB = select_point(population(:,:), fitness(:,:));
         order = crossover(orderA, orderB);
+        % Mutation
         for j = 1:n
             if rand < mutationRate
                 pointA = randi(length(order));
