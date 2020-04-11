@@ -48,20 +48,21 @@ squareY5 = [Y1, Y1, Y2, Y2, Y1];
 %   Create one standard pop with standard route for comparison
 popUnoptimized = [1:1:n];
 
-%% Initialize stuff
+%% Parameters
 popSize = 100;
 mu = 0.2; 
-mutationRate = 0.1;
-
-recordDistance = inf;
+mutationRate = 0.14;
 maxIter = 100;
+
+%% Initial values
+recordDistance = inf;
 iterCount = 0;
 keepSize = floor(mu*popSize);
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
 
-
+% Initial population
 for i = 1:popSize
     population(i,:) = randperm(n,n);
 end
@@ -76,7 +77,7 @@ while iterCount < maxIter
         %% Generate routeMatrix depending on populations
         posCount = 2;
         %  Reset Counts to start with first empty position. Increase to
-        %  simulate prefilled trys.
+        %  simulate prefilled trays.
         targetCount1 = 1;
         targetCount2 = 1;
         targetCount3 = 1;
@@ -108,6 +109,7 @@ while iterCount < maxIter
                 - sqrt(routeMatrix(i,k-1,1)^2+routeMatrix(i,k-1,2)^2));
             routeLength = routeLength + verticeLength;
         end
+        % Plot standard order for comparison
         if popMark == false
             figure(1);
             subplot(2,1,1);
@@ -117,7 +119,7 @@ while iterCount < maxIter
             grid on;
             for l = 1:vertices
                 hold on
-                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o')
+                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o');
             end
             plot(squareX1, squareY1);
             plot(squareX2, squareY2);

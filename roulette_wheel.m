@@ -4,9 +4,9 @@ function [outputArg1] = roulette_wheel(pop,fit)
 %   fitness values. Second clause with index length to keep output in
 %   boundaries.
 index = 1;
-randNum = rand;
+randNum = 1/rand;
 while randNum > 0 && index < length(fit)
-    randNum = randNum - fit(index,:);
+    randNum = randNum - 1/fit(index,:);
     index = index + 1;
 end
 index = index - 1;
