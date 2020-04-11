@@ -15,6 +15,8 @@ groupLow = 1;
 groupHigh = 4;
 boxWidth = 12;
 
+%% Define positions of seedlings and target plates. Seedlings get a corresponding 
+%   random group
 for i = 8:-1:1
     for j = 1:12
         seedlings(seedCount,:,:) = [j+2*boxWidth i randi([groupLow groupHigh],1)];
@@ -29,23 +31,23 @@ end
 
 
 %% Squares
-X1 = 0.6+2*boxWidth;
-X2 = 12.4+2*boxWidth;
+X1 = 0.6;
+X2 = 12.4;
 Y1 = 0.5;
 Y2 = 8.5;
 
 squareX1 = [X1, X2, X2, X1, X1];
 squareY1 = [Y1, Y1, Y2, Y2, Y1];
-squareX2 = [X1-boxWidth, X2-boxWidth, X2-boxWidth, X1-boxWidth, X1-boxWidth];
+squareX2 = [X1+boxWidth, X2+boxWidth, X2+boxWidth, X1+boxWidth, X1+boxWidth];
 squareY2 = [Y1, Y1, Y2, Y2, Y1];
-squareX3 = [X1-2*boxWidth, X2-2*boxWidth, X2-2*boxWidth, X1-2*boxWidth, X1-2*boxWidth];
+squareX3 = [X1+2*boxWidth, X2+2*boxWidth, X2+2*boxWidth, X1+2*boxWidth, X1+2*boxWidth];
 squareY3 = [Y1, Y1, Y2, Y2, Y1];
-squareX4 = [X1+boxWidth, X2+boxWidth, X2+boxWidth, X1+boxWidth, X1+boxWidth];
+squareX4 = [X1+3*boxWidth, X2+3*boxWidth, X2+3*boxWidth, X1+3*boxWidth, X1+3*boxWidth];
 squareY4 = [Y1, Y1, Y2, Y2, Y1];
-squareX5 = [X1+2*boxWidth, X2+2*boxWidth, X2+2*boxWidth, X1+2*boxWidth, X1+2*boxWidth];
+squareX5 = [X1+4*boxWidth, X2+4*boxWidth, X2+4*boxWidth, X1+4*boxWidth, X1+4*boxWidth];
 squareY5 = [Y1, Y1, Y2, Y2, Y1];
 
-%   Create one standard pop with standard route for comparison
+% Create one standard pop with standard route for comparison
 popUnoptimized = [1:1:n];
 
 %% Parameters
@@ -53,6 +55,12 @@ popSize = 100;
 mu = 0.2; 
 mutationRate = 0.14;
 maxIter = 100;
+
+%% Set starting point for each target plate to simulate pre filled state
+targetFill_1 = 1;
+targetFill_2 = 1;
+targetFill_3 = 1;
+targetFill_4 = 1;
 
 %% Initial values
 recordDistance = inf;
@@ -78,10 +86,10 @@ while iterCount < maxIter
         posCount = 2;
         %  Reset Counts to start with first empty position. Increase to
         %  simulate prefilled trays.
-        targetCount1 = 1;
-        targetCount2 = 1;
-        targetCount3 = 1;
-        targetCount4 = 1;
+        targetCount1 = targetFill_1;
+        targetCount2 = targetFill_2;
+        targetCount3 = targetFill_3;
+        targetCount4 = targetFill_4;
         for j = 1:length(population(i,:))
             routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
             if seedlings(population(i,j),3) == 1
