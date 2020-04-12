@@ -2,14 +2,13 @@
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 2;  %Number of seedlings
+n = 96;  %Number of seedlings
 vertices = 2*n+1;
 seedlings = zeros(n,3);
 target1 = zeros(n,2);
 target2 = zeros(n,2);
 target3 = zeros(n,2);
 target4 = zeros(n,2);
-target5 = zeros(n,2);
 seedCount = 1;
 groupLow = 1;
 groupHigh = 4;
@@ -47,13 +46,11 @@ squareY4 = [Y1, Y1, Y2, Y2, Y1];
 squareX5 = [X1+4*boxWidth, X2+4*boxWidth, X2+4*boxWidth, X1+4*boxWidth, X1+4*boxWidth];
 squareY5 = [Y1, Y1, Y2, Y2, Y1];
 
-% Create one standard pop with standard route for comparison
-popUnoptimized = [1:1:n];
 
 %% Parameters
-popSize = 100;
-mu = 0.2; 
-mutationRate = 0.14;
+popSize = 50;
+keepRate = 0.1; 
+mutationRate = 0.1;
 maxIter = 100;
 
 %% Set starting point for each target plate to simulate pre filled state
@@ -65,7 +62,7 @@ targetFill_4 = 1;
 %% Initial values
 recordDistance = inf;
 iterCount = 0;
-keepSize = floor(mu*popSize);
+keepSize = floor(keepRate*popSize);
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
@@ -74,6 +71,9 @@ fitness = zeros(popSize,1);
 for i = 1:popSize
     population(i,:) = randperm(n,n);
 end
+
+% Create one standard pop with standard route for comparison
+popUnoptimized = 1:1:n;
 
 population(1,:) = popUnoptimized;
 popMark = false;
@@ -203,11 +203,7 @@ while iterCount < maxIter
         for j = 1:n
             if rand < mutationRate
                 pointA = randi(length(order));
-                if pointA < length(order)
-                    pointB = pointA + 1;
-                else
-                    pointB = pointA - 1; 
-                end
+                pointB = randi(length(order));
                 temp = order(pointA);
                 order(pointA) = order(pointB);
                 order(pointB) = temp;

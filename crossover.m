@@ -4,7 +4,7 @@ function [newOrder] = crossover(ordA,ordB)
 %   filled with non used elements from second argument.
 first = randi([1 length(ordA)-1],1);
 last = randi([first+1 length(ordA)],1);
-subtourLength = 32;
+subtourLength = 48;
 if last-first > subtourLength
     last = first + subtourLength;
 end
