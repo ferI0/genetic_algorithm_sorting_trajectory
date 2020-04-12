@@ -2,7 +2,7 @@
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 96;  %Number of seedlings
+n = 2;  %Number of seedlings
 vertices = 2*n+1;
 seedlings = zeros(n,3);
 target1 = zeros(n,2);
@@ -11,8 +11,8 @@ target3 = zeros(n,2);
 target4 = zeros(n,2);
 target5 = zeros(n,2);
 seedCount = 1;
-groupLow = 2;
-groupHigh = 3;
+groupLow = 1;
+groupHigh = 4;
 boxWidth = 12;
 
 %% Define positions of seedlings and target plates. Seedlings get a corresponding 
@@ -112,7 +112,7 @@ while iterCount < maxIter
         end
         %% Calculation of route length
         routeLength = 0;
-        for k = 2:vertices
+        for k = 2:vertices+1
             verticeLength = sqrt((routeMatrix(i,k,1)-routeMatrix(i,k-1,1))^2 ...
                 + (routeMatrix(i,k,2)-routeMatrix(i,k-1,2))^2);
             routeLength = routeLength + verticeLength;
