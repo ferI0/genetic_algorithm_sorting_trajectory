@@ -1,4 +1,4 @@
-%% Test of route generation for genetic algorithm
+%% Route generation and optimization with genetic algorithm
 %% FE 2020
 clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
@@ -11,8 +11,8 @@ target3 = zeros(n,2);
 target4 = zeros(n,2);
 target5 = zeros(n,2);
 seedCount = 1;
-groupLow = 1;
-groupHigh = 4;
+groupLow = 2;
+groupHigh = 3;
 boxWidth = 12;
 
 %% Define positions of seedlings and target plates. Seedlings get a corresponding 
@@ -113,8 +113,8 @@ while iterCount < maxIter
         %% Calculation of route length
         routeLength = 0;
         for k = 2:vertices
-            verticeLength = abs(sqrt(routeMatrix(i,k,1)^2+routeMatrix(i,k,2)^2)...
-                - sqrt(routeMatrix(i,k-1,1)^2+routeMatrix(i,k-1,2)^2));
+            verticeLength = sqrt((routeMatrix(i,k,1)-routeMatrix(i,k-1,1))^2 ...
+                + (routeMatrix(i,k,2)-routeMatrix(i,k-1,2))^2);
             routeLength = routeLength + verticeLength;
         end
         % Plot standard order for comparison
@@ -124,6 +124,8 @@ while iterCount < maxIter
             title("Unoptimized distance: "+routeLength);
             xlim([0 61]);
             ylim([0 9]);
+            xlabel('x');
+            ylabel('y');
             grid on;
             for l = 1:vertices
                 hold on
