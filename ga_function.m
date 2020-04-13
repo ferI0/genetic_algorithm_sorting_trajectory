@@ -1,8 +1,12 @@
+function [outputArg1,outputArg2] = ga_function(POPSIZE, KEEPRATE, MUTRATE, ITMAX, NUMSEED, GROUPS)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+
 %% Route generation and optimization with genetic algorithm
 %% FE 2020
-clear all;
+%clear all;
 %% Mostly manually set start and end positions with random target groups for each seedling
-n = 96;  %Number of seedlings
+n = NUMSEED;  %Number of seedlings
 vertices = 2*n+1;
 seedlings = zeros(n,3);
 target1 = zeros(n,2);
@@ -14,11 +18,11 @@ groupLow = 1;
 groupHigh = 4;
 boxWidth = 12;
 
-%% Define positions of seedlings and target plates. Seedlings get a corresponding 
+%% Define positions of seedlings and target plates. Seedlings get a corresponding
 %   random group
 for i = 8:-1:1
     for j = 1:12
-        seedlings(seedCount,:,:) = [j+2*boxWidth i randi([groupLow groupHigh],1)];
+        seedlings(seedCount,:,:) = [j+2*boxWidth i GROUPS(seedCount)];
         target1(seedCount,:) = [j i];
         target2(seedCount,:) = [j+1*boxWidth i];
         target3(seedCount,:) = [j+3*boxWidth i];
@@ -28,24 +32,13 @@ for i = 8:-1:1
     end
 end
 
-%% Squares
-X1 = 0.6;
-X2 = 12.4;
-Y1 = 0.5;
-Y2 = 8.5;
-squareX = zeros(5,5);
-squareY = zeros(5,5);
-for i = 1:5
-    squareX(i,:) = [X1+(i-1)*boxWidth, X2+(i-1)*boxWidth, X2+(i-1)*boxWidth, ...
-        X1+(i-1)*boxWidth, X1+(i-1)*boxWidth]; 
-    squareY(i,:) = [Y1, Y1, Y2, Y2, Y1];
-end
+
 
 %% Parameters
-popSize = 50;
-keepRate = 0.1; 
-mutationRate = 0.1;
-maxIter = 1000;
+popSize = POPSIZE;
+keepRate = KEEPRATE;
+mutationRate = MUTRATE;
+maxIter = ITMAX;
 
 %% Set starting point for each target plate to simulate pre filled state
 targetFill_1 = 1;
@@ -70,8 +63,6 @@ end
 % Create one standard pop with standard route for comparison
 popUnoptimized = 1:1:n;
 population(1,:) = popUnoptimized;
-popMark = false;
-standardLength = 1;
 
 while iterCount <= maxIter
     %% Calculate Fitness
@@ -111,50 +102,11 @@ while iterCount <= maxIter
                 + (routeMatrix(i,k,2)-routeMatrix(i,k-1,2))^2);
             routeLength = routeLength + verticeLength;
         end
-        % Plot standard order for comparison
-        if popMark == false
-            figure(1);
-            subplot(2,1,1);
-            title("Unoptimized distance: "+routeLength);
-            xlim([0 61]);
-            ylim([0 9]);
-            xlabel('x');
-            ylabel('y');
-            grid on;
-            for l = 1:vertices
-                hold on
-                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o');
-            end
-            for m = 1:5
-                plot(squareX(m,:), squareY(m,:));
-            end
-            daspect([1 1 1])
-            standardLength = routeLength;
-            popMark = true;
-        end
         %% Update best populations
         if routeLength < recordDistance
             recordDistance = routeLength;
-            bestEver = population(i,:);
-            
-            %% Plot route
-            figure(1);
-            subplot(2,1,2);
-            cla(subplot(2,1,2));
-            title("Optimized distance: "+recordDistance);
-            xlim([0 61]);
-            ylim([0 9]);
-            xlabel((recordDistance/standardLength-1)*100+"%");
-            grid on;
-            for l = 1:vertices
-                hold on
-                plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o')
-            end
-            for m = 1:5
-                plot(squareX(m,:), squareY(m,:));
-            end
-            daspect([1 1 1])
-        end        
+            bestEver = population(i,:);          
+        end
         fitness(i,1) = routeLength;
     end
     
@@ -162,7 +114,7 @@ while iterCount <= maxIter
     sumFitness = 0;
     for i = 1:popSize
         sumFitness = sumFitness + fitness(i,1);
-    end    
+    end
     for i = 1:popSize
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
@@ -199,11 +151,14 @@ while iterCount <= maxIter
                 order(pointB) = temp;
             end
         end
-        newPopulation(i,:) = order;      
+        newPopulation(i,:) = order;
     end
     population = newPopulation;
     
     %% Increment iter
     iterCount = iterCount+1;
+end
+outputArg1 = recordDistance;
+outputArg2 = avrgFitness;
 end
 
