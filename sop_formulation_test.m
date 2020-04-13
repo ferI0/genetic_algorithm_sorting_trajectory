@@ -45,7 +45,7 @@ end
 popSize = 50;
 keepRate = 0.1; 
 mutationRate = 0.1;
-maxIter = 100;
+maxIter = 1000;
 
 %% Set starting point for each target plate to simulate pre filled state
 targetFill_1 = 1;
@@ -55,11 +55,12 @@ targetFill_4 = 1;
 
 %% Initial values
 recordDistance = inf;
-iterCount = 0;
+iterCount = 1;
 keepSize = floor(keepRate*popSize);
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
+avrgFitness = zeros(maxIter,2);
 
 % Initial population
 for i = 1:popSize
@@ -68,7 +69,6 @@ end
 
 % Create one standard pop with standard route for comparison
 popUnoptimized = 1:1:n;
-
 population(1,:) = popUnoptimized;
 popMark = false;
 standardLength = 1;
@@ -167,6 +167,9 @@ while iterCount < maxIter
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
     
+    %% Average Fitness of the population
+    avrgFitness(iterCount,1) = sumFitness / popSize;
+    avrgFitness(iterCount,2) = std(fitness);
     %% Sort fitness values while keeping the index
     sortedFitness = zeros(popSize,2);
     sortedFitness(:,1) = fitness;
