@@ -1,6 +1,5 @@
 function [outputArg1] = roulette_wheel(pop,fit)
-%Select point
-%   Roulette Wheel Function to select a random pop based on
+%   Roulette Wheel Function to select a random chromosom based on
 %   fitness values. Second clause with index length to keep output in
 %   boundaries.
 index = 1;

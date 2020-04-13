@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = ga_function(POPSIZE, KEEPRATE, MUTRATE, ITMAX, NUMSEED, GROUPS)
+function [outputArg1] = ga_function(POPSIZE, KEEPRATE, MUTRATE, ITMAX, NUMSEED, GROUPS)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -40,12 +40,6 @@ keepRate = KEEPRATE;
 mutationRate = MUTRATE;
 maxIter = ITMAX;
 
-%% Set starting point for each target plate to simulate pre filled state
-targetFill_1 = 1;
-targetFill_2 = 1;
-targetFill_3 = 1;
-targetFill_4 = 1;
-
 %% Initial values
 recordDistance = inf;
 iterCount = 1;
@@ -53,8 +47,7 @@ keepSize = floor(keepRate*popSize);
 routeMatrix = zeros(popSize, vertices+1, 2);
 population = zeros(popSize,n);
 fitness = zeros(popSize,1);
-avrgFitness = zeros(maxIter,2);
-
+storeRecord = zeros(maxIter,1);
 % Initial population
 for i = 1:popSize
     population(i,:) = randperm(n,n);
@@ -71,10 +64,10 @@ while iterCount <= maxIter
         posCount = 2;
         %  Reset Counts to start with first empty position. Increase to
         %  simulate prefilled trays.
-        targetCount1 = targetFill_1;
-        targetCount2 = targetFill_2;
-        targetCount3 = targetFill_3;
-        targetCount4 = targetFill_4;
+        targetCount1 = 1;
+        targetCount2 = 1;
+        targetCount3 = 1;
+        targetCount4 = 1;
         for j = 1:length(population(i,:))
             routeMatrix(i,posCount,:) = seedlings(population(i,j),1:2);
             if seedlings(population(i,j),3) == 1
@@ -105,8 +98,10 @@ while iterCount <= maxIter
         %% Update best populations
         if routeLength < recordDistance
             recordDistance = routeLength;
+            
             bestEver = population(i,:);          
         end
+        storeRecord(iterCount) = recordDistance;
         fitness(i,1) = routeLength;
     end
     
@@ -118,10 +113,7 @@ while iterCount <= maxIter
     for i = 1:popSize
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
-    
-    %% Average Fitness of the population
-    avrgFitness(iterCount,1) = sumFitness / popSize;
-    avrgFitness(iterCount,2) = std(fitness);
+
     %% Sort fitness values while keeping the index
     sortedFitness = zeros(popSize,2);
     sortedFitness(:,1) = fitness;
@@ -158,7 +150,6 @@ while iterCount <= maxIter
     %% Increment iter
     iterCount = iterCount+1;
 end
-outputArg1 = recordDistance;
-outputArg2 = avrgFitness;
+outputArg1 = storeRecord;
 end
 

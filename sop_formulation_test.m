@@ -1,7 +1,7 @@
 %% Route generation and optimization with genetic algorithm
 %% FE 2020
 clear all;
-%% Mostly manually set start and end positions with random target groups for each seedling
+%% Start and end position vectors with random target groups for each seedling
 n = 96;  %Number of seedlings
 vertices = 2*n+1;
 seedlings = zeros(n,3);
@@ -45,7 +45,7 @@ end
 popSize = 50;
 keepRate = 0.1; 
 mutationRate = 0.1;
-maxIter = 1000;
+maxIter = 100;
 
 %% Set starting point for each target plate to simulate pre filled state
 targetFill_1 = 1;
@@ -167,9 +167,6 @@ while iterCount <= maxIter
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
     
-    %% Average Fitness of the population
-    avrgFitness(iterCount,1) = sumFitness / popSize;
-    avrgFitness(iterCount,2) = std(fitness);
     %% Sort fitness values while keeping the index
     sortedFitness = zeros(popSize,2);
     sortedFitness(:,1) = fitness;
