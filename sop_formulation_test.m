@@ -28,24 +28,18 @@ for i = 8:-1:1
     end
 end
 
-
 %% Squares
 X1 = 0.6;
 X2 = 12.4;
 Y1 = 0.5;
 Y2 = 8.5;
-
-squareX1 = [X1, X2, X2, X1, X1];
-squareY1 = [Y1, Y1, Y2, Y2, Y1];
-squareX2 = [X1+boxWidth, X2+boxWidth, X2+boxWidth, X1+boxWidth, X1+boxWidth];
-squareY2 = [Y1, Y1, Y2, Y2, Y1];
-squareX3 = [X1+2*boxWidth, X2+2*boxWidth, X2+2*boxWidth, X1+2*boxWidth, X1+2*boxWidth];
-squareY3 = [Y1, Y1, Y2, Y2, Y1];
-squareX4 = [X1+3*boxWidth, X2+3*boxWidth, X2+3*boxWidth, X1+3*boxWidth, X1+3*boxWidth];
-squareY4 = [Y1, Y1, Y2, Y2, Y1];
-squareX5 = [X1+4*boxWidth, X2+4*boxWidth, X2+4*boxWidth, X1+4*boxWidth, X1+4*boxWidth];
-squareY5 = [Y1, Y1, Y2, Y2, Y1];
-
+squareX = zeros(5,5);
+squareY = zeros(5,5);
+for i = 1:5
+    squareX(i,:) = [X1+(i-1)*boxWidth, X2+(i-1)*boxWidth, X2+(i-1)*boxWidth, ...
+        X1+(i-1)*boxWidth, X1+(i-1)*boxWidth]; 
+    squareY(i,:) = [Y1, Y1, Y2, Y2, Y1];
+end
 
 %% Parameters
 popSize = 50;
@@ -131,11 +125,9 @@ while iterCount < maxIter
                 hold on
                 plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o');
             end
-            plot(squareX1, squareY1);
-            plot(squareX2, squareY2);
-            plot(squareX3, squareY3);
-            plot(squareX4, squareY4);
-            plot(squareX5, squareY5);
+            for m = 1:5
+                plot(squareX(m,:), squareY(m,:));
+            end
             daspect([1 1 1])
             standardLength = routeLength;
             popMark = true;
@@ -158,15 +150,11 @@ while iterCount < maxIter
                 hold on
                 plot(routeMatrix(i,[l, l+1],1), routeMatrix(i,[l, l+1],2),'-o')
             end
-            plot(squareX1, squareY1);
-            plot(squareX2, squareY2);
-            plot(squareX3, squareY3);
-            plot(squareX4, squareY4);
-            plot(squareX5, squareY5);
+            for m = 1:5
+                plot(squareX(m,:), squareY(m,:));
+            end
             daspect([1 1 1])
-        end
-        
-        %% "Calculate" fitness
+        end        
         fitness(i,1) = routeLength;
     end
     
@@ -174,8 +162,7 @@ while iterCount < maxIter
     sumFitness = 0;
     for i = 1:popSize
         sumFitness = sumFitness + fitness(i,1);
-    end
-    
+    end    
     for i = 1:popSize
         fitness(i,1) = fitness(i,1) / sumFitness;
     end
@@ -209,8 +196,7 @@ while iterCount < maxIter
                 order(pointB) = temp;
             end
         end
-        newPopulation(i,:) = order;
-        
+        newPopulation(i,:) = order;      
     end
     population = newPopulation;
     
