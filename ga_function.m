@@ -1,4 +1,4 @@
-function [outputArg1] = ga_function(POPSIZE, KEEPRATE, MUTRATE, ITMAX, NUMSEED, GROUPS)
+function [outputArg1, out2] = ga_function(POPSIZE, KEEPRATE, MUTRATE, ITMAX, NUMSEED, GROUPS)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -14,8 +14,6 @@ target2 = zeros(n,2);
 target3 = zeros(n,2);
 target4 = zeros(n,2);
 seedCount = 1;
-groupLow = 1;
-groupHigh = 4;
 boxWidth = 12;
 
 %% Define positions of seedlings and target plates. Seedlings get a corresponding
@@ -39,7 +37,7 @@ popSize = POPSIZE;
 keepRate = KEEPRATE;
 mutationRate = MUTRATE;
 maxIter = ITMAX;
-
+standard = 0;
 %% Initial values
 recordDistance = inf;
 iterCount = 1;
@@ -56,7 +54,7 @@ end
 % Create one standard pop with standard route for comparison
 popUnoptimized = 1:1:n;
 population(1,:) = popUnoptimized;
-
+popMark = false;
 while iterCount <= maxIter
     %% Calculate Fitness
     for i = 1:popSize
@@ -94,6 +92,10 @@ while iterCount <= maxIter
             verticeLength = sqrt((routeMatrix(i,k,1)-routeMatrix(i,k-1,1))^2 ...
                 + (routeMatrix(i,k,2)-routeMatrix(i,k-1,2))^2);
             routeLength = routeLength + verticeLength;
+        end
+        if popMark == false
+            standard = routeLength;
+            popMark = true;
         end
         %% Update best populations
         if routeLength < recordDistance
@@ -151,5 +153,6 @@ while iterCount <= maxIter
     iterCount = iterCount+1;
 end
 outputArg1 = storeRecord;
+out2 = standard;
 end
 
